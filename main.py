@@ -22,12 +22,12 @@ creds = service_account.Credentials.from_service_account_info(
 # ✅ Create Google Drive service instance
 drive_service = build("drive", "v3", credentials=creds)
 
-# ✅ Initialize Flask app
+# ✅ Initialize Flask app (Removed duplicate)
 app = Flask(__name__)
 
 # Function to extract text and detect bold formatting from DOCX
 def extract_mcqs_from_docx(file_path):
-    doc = Document(file_path)  # ✅ Corrected the file path
+    doc = Document(file_path)
     mcqs = []
     current_question = None
     current_options = []
@@ -59,31 +59,13 @@ def extract_mcqs_from_docx(file_path):
 
     return mcqs
 
-
 # Function to download DOCX file from Google Drive
 def download_file(file_id, file_path):
     request = drive_service.files().get_media(fileId=file_id)
     with open(file_path, "wb") as f:
         f.write(request.execute())
 
-
-# Replace with the actual file ID from Google Drive
-file_id = "1DRz09GPJlUffDidOaWzXTlMdNiqig7Uq"
-file_path = "downloaded.docx"
-
-# Download the file from Google Drive
-download_file(file_id, file_path)
-
-# Extract MCQs from the DOCX file
-mcqs = extract_mcqs_from_docx(file_path)
-
-# Print the extracted questions and correct answers
-from flask import Flask, request, jsonify
-import requests
-
-app = Flask(__name__)
-
-
+# ✅ API Route to handle MCQ Extraction
 @app.route('/extract_mcqs', methods=['POST'])
 def extract_mcqs():
     data = request.json
@@ -92,13 +74,15 @@ def extract_mcqs():
     if not file_id:
         return jsonify({"error": "No file_id provided"}), 400
 
-    # Download and process the DOCX file
+    # ✅ Define file path
     file_path = "downloaded.docx"
+
+    # ✅ Download and process the DOCX file
     download_file(file_id, file_path)
     mcqs = extract_mcqs_from_docx(file_path)
 
     return jsonify({"mcqs": mcqs})
 
-
+# ✅ Run Flask App
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
