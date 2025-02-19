@@ -4,7 +4,12 @@ from docx import Document
 import os
 
 # Path to your service account JSON file
-SERVICE_ACCOUNT_FILE = "service-account.json"  # Update with your actual file name
+import json
+import os
+
+SERVICE_ACCOUNT_INFO = json.loads(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+creds = service_account.Credentials.from_service_account_info(SERVICE_ACCOUNT_INFO, scopes=SCOPES)
+  # Update with your actual file name
 
 # Define the required API scopes
 SCOPES = [
