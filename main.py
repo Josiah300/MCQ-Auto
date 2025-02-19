@@ -1,29 +1,29 @@
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 from docx import Document
-import os
-
-# Path to your service account JSON file
 import json
 import os
+from flask import Flask, request, jsonify
 
-SERVICE_ACCOUNT_INFO = json.loads(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
-creds = service_account.Credentials.from_service_account_info(SERVICE_ACCOUNT_INFO, scopes=SCOPES)
-  # Update with your actual file name
-
-# Define the required API scopes
+# ✅ Define SCOPES at the top before using it
 SCOPES = [
-    "https://www.googleapis.com/auth/drive.readonly",  # Read access to Google Drive
-    "https://www.googleapis.com/auth/documents.readonly"  # Read access to Google Docs
+    "https://www.googleapis.com/auth/drive.readonly",
+    "https://www.googleapis.com/auth/documents.readonly"
 ]
 
-# Authenticate using the service account
-creds = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# ✅ Read service account credentials from environment variables
+SERVICE_ACCOUNT_INFO = json.loads(os.getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 
-# Create a Google Drive service instance
+# ✅ Create credentials object
+creds = service_account.Credentials.from_service_account_info(
+    SERVICE_ACCOUNT_INFO, scopes=SCOPES
+)
+
+# ✅ Create Google Drive service instance
 drive_service = build("drive", "v3", credentials=creds)
 
+# ✅ Initialize Flask app
+app = Flask(__name__)
 
 # Function to extract text and detect bold formatting from DOCX
 def extract_mcqs_from_docx(file_path):
